@@ -1,0 +1,1121 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "Servicios para la aplicación que requiera la información de pasar la Aduana de las Compras Sobre Muelle a Canarias: Información sobre declaraciones de valor, proveedores, productos y relaciones con sus códigos Taric y REA.\n",
+    "version" : "1.0.0",
+    "title" : "Logística - Gestión de Aduanas"
+  },
+  "host" : "busintranet.itg.mercadona.es:80",
+  "basePath" : "/logistica/gestion-aduanas/v1.0",
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/declaraciones-valor/sumario" : {
+      "get" : {
+        "summary" : "Obtener listado reducido de las declaraciones de valor.",
+        "description" : "Obtener declaraciones de valor para listar por pantalla recuperando la información principal sin el detalle. Este servicio se utilizará para las pantallas que listen las declaraciones con y sin paginación.\n",
+        "operationId" : "getSumarioListDeclaracionValor",
+        "parameters" : [ {
+          "name" : "locale",
+          "in" : "query",
+          "description" : "Idioma preferido, Código de idioma - Código de país. Ejemplo es-ES.",
+          "required" : true,
+          "type" : "string",
+          "default" : "es-ES"
+        }, {
+          "name" : "codigoUsuario",
+          "in" : "query",
+          "description" : "Código del usuario logado en el portal. El consumidor deberá informar el usuario asociado al proveedor que consume el servicio. Se utiliza como filtro. Ejemplo: sgarciae\n",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "codigoAgencia",
+          "in" : "query",
+          "description" : "Código de la agencia de aduana logada en el portal del proveedor.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "paginaInicio",
+          "in" : "query",
+          "description" : "Desplazamiento (offset) inicial en páginas de entre los resultados de la colección.",
+          "required" : false,
+          "type" : "integer",
+          "default" : 1
+        }, {
+          "name" : "anyo",
+          "in" : "query",
+          "description" : "Año de la declaración de valor.",
+          "required" : false,
+          "type" : "number"
+        }, {
+          "name" : "numeroDeclaracion",
+          "in" : "query",
+          "description" : "Código único de una declaración de valor.",
+          "required" : false,
+          "type" : "number"
+        }, {
+          "name" : "codigoPedido",
+          "in" : "query",
+          "description" : "Código del pedido realizado por Mercadona y relacionado  con la declaración de valor. Es un alfanumérico.\n",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "codigoAlmacen",
+          "in" : "query",
+          "description" : "Código del almacén destino al que se enviará el pedido.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "nombreAlmacen",
+          "in" : "query",
+          "description" : "Nombre del almacén donde se entregará el pedido. Se buscará la cadena contenida en los diferentes centros. El tamaño mínimo para la búsqueda con 3 caracteres.\n",
+          "required" : false,
+          "type" : "string",
+          "minLength" : 3
+        }, {
+          "name" : "paginaTamanyo",
+          "in" : "query",
+          "description" : "Número de resultados por página que se quiere recuperar.",
+          "required" : false,
+          "type" : "integer",
+          "default" : 10
+        }, {
+          "name" : "orden",
+          "in" : "query",
+          "description" : "Campo por el que se quiere ordenar, con +- indicaremos el orden(ascendente o descendente).\n",
+          "required" : false,
+          "type" : "string",
+          "default" : "-numeroDeclaracion",
+          "enum" : [ "+anyo", "-anyo", "+numeroDeclaracion", "-numeroDeclaracion", "+tipoDeclaracion", "-tipoDeclaracion", "+fechaExpedicion", "+fechaDeclaracion", "+fechaDescarga", "-fechaExpedicion", "-fechaDeclaracion", "-fechaDescarga", "+codigoProveedor", "-codigoProveedor", "+nombreProveedor", "-nombreProveedor", "+numeroPedido", "-numeroPedido" ]
+        }, {
+          "name" : "codigoProveedor",
+          "in" : "query",
+          "description" : "Código del proveedor por el que se quiere filtrar desde pantalla. Se refiere al código del proveedor que no es el código publico.\n",
+          "required" : false,
+          "type" : "integer"
+        }, {
+          "name" : "nombreProveedor",
+          "in" : "query",
+          "description" : "Nombre del proveedor por el que se quiere filtrar desde pantalla. Se buscará la cadena contenida en los diferentes nombres de proveedores. El tamaño mínimo para la busqueda con 3 caracteres.\n",
+          "required" : false,
+          "type" : "string",
+          "minLength" : 3
+        }, {
+          "name" : "tipoDeclaracion",
+          "in" : "query",
+          "description" : "Indica que tipo de documento queremos ver en la tabla. T: Todos F: Factura D: Declaración de valor\n",
+          "required" : false,
+          "type" : "string",
+          "default" : "T",
+          "enum" : [ "T", "F", "D" ]
+        }, {
+          "name" : "estadoDeclaracion",
+          "in" : "query",
+          "description" : "Estados en los que se puede encontrar una Declaración de Valor.\n  TD: Todos\n  CM: Declaración de valor carga manual\n  VP: Validación Pendiente\n  VI: Validación Incorrecta\n  VC: Validación Correcta\n",
+          "required" : false,
+          "type" : "string",
+          "default" : "TD",
+          "enum" : [ "TD", "CM", "VP", "VI", "VC" ]
+        }, {
+          "name" : "estadoDescarga",
+          "in" : "query",
+          "description" : "Indica si queremos ver las declaraciones que han sido descargadas o no.\n  T: Todas las Declaraciones de Valor\n  D: Solo las descargadas\n  N: Solo las no descargadas\n",
+          "required" : false,
+          "type" : "string",
+          "default" : "T",
+          "enum" : [ "T", "D", "N" ]
+        }, {
+          "name" : "tipoFechaFiltro",
+          "in" : "query",
+          "description" : "Tipo de fecha por la que queremos realizar la búsqueda. FE: fechaExpedicion FV: fechaDeclaracion FD: fechaDescarga\n",
+          "required" : false,
+          "type" : "string",
+          "enum" : [ "FE", "FV", "FD" ]
+        }, {
+          "name" : "fechaDesde",
+          "in" : "query",
+          "description" : "Fecha desde la que se quiere hacer el filtro de declaraciones de valor. Este campo solamente aplica si se informa tipoFechaFiltro.\n",
+          "required" : false,
+          "type" : "string",
+          "default" : "1901-01-01T00:00:00.022Z",
+          "format" : "date-time"
+        }, {
+          "name" : "fechaHasta",
+          "in" : "query",
+          "description" : "Fecha hasta la que se quiere hacer el filtro de declaraciones de valor. Este campo solamente aplica si se informa tipoFechaFiltro.\n",
+          "required" : false,
+          "type" : "string",
+          "default" : "9999-01-01T00:00:00.022Z",
+          "format" : "date-time"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Devuelve las declaraciones de valor para la pantalla de listado con filtros.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200"
+            }
+          },
+          "400" : {
+            "description" : "Formato de envío inválido o lógica de negocio incorrecta.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          },
+          "500" : {
+            "description" : "El servicio ha respondido con una excepción.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    },
+    "/declaraciones-valor" : {
+      "post" : {
+        "summary" : "Crear una nueva declaración de valor",
+        "description" : "Crear una nueva declaración de valor a través de la expedición recibida en el modelo de datos.\n",
+        "operationId" : "postGenerarDeclaracionValor",
+        "parameters" : [ {
+          "name" : "locale",
+          "in" : "query",
+          "description" : "Idioma preferido, Código de idioma - Código país. Ejemplo es-ES",
+          "required" : true,
+          "type" : "string",
+          "default" : "es-ES"
+        }, {
+          "in" : "body",
+          "name" : "datos",
+          "description" : "Datos compuestos por la cabecera y un listado de lineas de la declaraciones de valor\n",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/datos"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "El objeto se ha creado correctamente. Se devuelve el identificador de la declaracion de valor generada.\n",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_201"
+            }
+          },
+          "400" : {
+            "description" : "Formato de envío inválido o lógica de negocio incorrecta.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          },
+          "500" : {
+            "description" : "El servicio ha respondido con una excepción.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    },
+    "/declaraciones-valor/{codigoDeclaracion}-{anyo}-{version}" : {
+      "get" : {
+        "summary" : "Obtener el detalle de una declaración de valor.",
+        "description" : "Obtener el detalle de una declaración de valor. Se recuperan los datos generales, indicadores de la declaración y líneas con la información de los productos.\n",
+        "operationId" : "getDetalleDeclaracionValor",
+        "parameters" : [ {
+          "name" : "codigoDeclaracion",
+          "in" : "path",
+          "description" : "Código de la declaración de valor.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "anyo",
+          "in" : "path",
+          "description" : "Año en el que ha sido generada la declaración de valor.",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "version",
+          "in" : "path",
+          "description" : "Versión de la declaración de valor.",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "locale",
+          "in" : "query",
+          "description" : "Idioma preferido, Código de idioma - Código de país. Ejemplo es-ES",
+          "required" : true,
+          "type" : "string",
+          "default" : "es-ES"
+        }, {
+          "name" : "codigoUsuario",
+          "in" : "query",
+          "description" : "Código del usuario logado en el portal que consume al API.  Este usuario se usa para filtrar.\n",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Devuelve el detalle de una declaración de valor en formato JSON.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_1"
+            }
+          },
+          "400" : {
+            "description" : "Formato de envío inválido o lógica de negocio incorrecta.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          },
+          "500" : {
+            "description" : "El servicio ha respondido con una excepción.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    },
+    "/declaraciones-valor/{codigoDeclaracion}-{anyo}-{version}/confirmar-descarga" : {
+      "put" : {
+        "summary" : "Actualiza el estado de la descarga del objeto.",
+        "description" : "Servicio para actualizar el estado 'descargado' de una declaración de valor cuando se descargue desde el portal e-factura.\n",
+        "operationId" : "putEstadoDescargaDeclaracionValor",
+        "parameters" : [ {
+          "name" : "codigoDeclaracion",
+          "in" : "path",
+          "description" : "Código de la declaración de valor.",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "anyo",
+          "in" : "path",
+          "description" : "Código de la declaración de valor.",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "version",
+          "in" : "path",
+          "description" : "Código de la declaración de valor.",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "locale",
+          "in" : "query",
+          "description" : "Idioma Idioma preferido, Código de idioma - Código país. Ejemplo es-ES",
+          "required" : true,
+          "type" : "string",
+          "default" : "es-ES"
+        }, {
+          "name" : "codigoProveedor",
+          "in" : "query",
+          "description" : "Código de la agencia de aduana logada en el portal del proveedor.",
+          "required" : false,
+          "type" : "number"
+        }, {
+          "in" : "body",
+          "name" : "datos",
+          "description" : "Datos para actualizar el estado descarga de una declaración de valor.\n",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/datos_1"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Se actualiza el estado de la descarga y se devuelve el código de la declaración de valor actualizada.\n",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_201"
+            }
+          },
+          "400" : {
+            "description" : "Formato de envío inválido o lógica de negocio incorrecta.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          },
+          "500" : {
+            "description" : "El servicio ha respondido con una excepción.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    },
+    "/declaraciones-valor/{codigoDeclaracion}-{anyo}-{version}/documento" : {
+      "get" : {
+        "summary" : "Descarga una declaración de valor",
+        "description" : "Servicio para la descarga de una declaración de valor en el formato indicado.\n",
+        "operationId" : "getDocumento",
+        "produces" : [ "application/pdf", "text/csv" ],
+        "parameters" : [ {
+          "name" : "codigoDeclaracion",
+          "in" : "path",
+          "description" : "Código de la declaración de valor.",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "anyo",
+          "in" : "path",
+          "description" : "Código de la declaración de valor.",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "version",
+          "in" : "path",
+          "description" : "Código de la declaración de valor.",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "locale",
+          "in" : "query",
+          "description" : "Idioma preferido, Código de idioma - Código de país. Ejemplo es-ES",
+          "required" : false,
+          "type" : "string",
+          "default" : "es-ES"
+        }, {
+          "name" : "codigoUsuario",
+          "in" : "query",
+          "description" : "Código del usuario logado en el portal que consume al API\n",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "codigoProveedor",
+          "in" : "query",
+          "description" : "Código del proveedor",
+          "required" : false,
+          "type" : "integer"
+        }, {
+          "name" : "tipoDocumento",
+          "in" : "query",
+          "description" : "Formato en el que queremos descargar la declaración de valor",
+          "required" : true,
+          "type" : "string",
+          "default" : "pdf",
+          "enum" : [ "pdf", "csv" ]
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Se encuentra el recurso y se descarga en el formato indicado",
+            "schema" : {
+              "type" : "file"
+            }
+          },
+          "400" : {
+            "description" : "Formato de envío inválido o lógica de negocio incorrecta.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          },
+          "500" : {
+            "description" : "El servicio ha respondido con una excepción.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    },
+    "/empresas/{codigoEmpresa}/datos-fiscales" : {
+      "get" : {
+        "summary" : "Obtener los datos fiscales de una empresa.",
+        "description" : "Obtener datos fiscales de una empresa que filtraremos por su código.",
+        "operationId" : "getObtenerDatosFiscales",
+        "parameters" : [ {
+          "name" : "locale",
+          "in" : "query",
+          "description" : "Idioma preferido, Código de idioma - Código país. Ejemplo es-ES",
+          "required" : true,
+          "type" : "string",
+          "default" : "es-ES"
+        }, {
+          "name" : "codigoUsuario",
+          "in" : "query",
+          "description" : "Código del usuario logado en el portal ejecutor.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "codigoEmpresa",
+          "in" : "path",
+          "description" : "Código de la empresa de la que se quieren obtener los datos fiscales.",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Devuelve los datos fiscales de la empresa filtrada",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_2"
+            }
+          },
+          "400" : {
+            "description" : "Formato de envío inválido o lógica de negocio incorrecta.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          },
+          "500" : {
+            "description" : "El servicio ha respondido con una excepción.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    },
+    "/proveedores" : {
+      "get" : {
+        "summary" : "Obtener listado de proveedores",
+        "description" : "Obtener proveedores que cumplan con los filtros introducidos por pantalla, código, nombre, activo.",
+        "operationId" : "getObtenerProveedores",
+        "parameters" : [ {
+          "name" : "locale",
+          "in" : "query",
+          "description" : "Idioma preferido, Código de idioma - Código país. Ejemplo es-ES.",
+          "required" : true,
+          "type" : "string",
+          "default" : "es-ES"
+        }, {
+          "name" : "codigoUsuario",
+          "in" : "query",
+          "description" : "Código del usuario logado en el portal que consume al API. Se usa como filtro de datos.\n",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "codigoProveedor",
+          "in" : "query",
+          "description" : "Código del proveedor para filtrar.",
+          "required" : false,
+          "type" : "integer"
+        }, {
+          "name" : "nombreProveedor",
+          "in" : "query",
+          "description" : "Nombre del proveedor.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "estaActivo",
+          "in" : "query",
+          "description" : "Proveedor activo para trabajar con Gesaduan.",
+          "required" : true,
+          "type" : "boolean",
+          "default" : true
+        }, {
+          "name" : "paginaInicio",
+          "in" : "query",
+          "description" : "Desplazamiento (offset) inicial en páginas de entre los resultados de la colección.",
+          "required" : false,
+          "type" : "integer",
+          "default" : 1
+        }, {
+          "name" : "paginaTamanyo",
+          "in" : "query",
+          "description" : "Número de resultados por página",
+          "required" : false,
+          "type" : "integer",
+          "default" : 10
+        }, {
+          "name" : "orden",
+          "in" : "query",
+          "description" : "Campo por el que se quiere ordenar, con +- indicaremos el orden(ascendente o descendente)",
+          "required" : false,
+          "type" : "string",
+          "default" : "+codigoProveedorLegacy",
+          "enum" : [ "+codigoProveedorLegacy", "-codigoProveedorLegacy", "+nombreProveedor", "-nombreProveedor" ]
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Devuelve un listado de proveedores.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_3"
+            }
+          },
+          "400" : {
+            "description" : "Formato de envío inválido o lógica de negocio incorrecta.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          },
+          "500" : {
+            "description" : "El servicio ha respondido con una excepción.",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "DatosFiscalesType" : {
+      "type" : "object",
+      "properties" : {
+        "descRazonSocial" : {
+          "type" : "string",
+          "example" : "MERCADONA S.A.",
+          "description" : "Razon social de la empresa"
+        },
+        "numCif" : {
+          "type" : "string",
+          "example" : "A46103834",
+          "description" : "CIF de la empresa"
+        },
+        "descDireccion" : {
+          "type" : "string",
+          "example" : "C/ VALENCIA 5",
+          "description" : "Direccion de la empresa"
+        },
+        "descCodigoPostal" : {
+          "type" : "string",
+          "example" : "46016",
+          "description" : "Código postal de la dirección fiscal de la empresa."
+        },
+        "descPoblacion" : {
+          "type" : "string",
+          "example" : "TAVERNES BLANQUES",
+          "description" : "Población de la dirección fiscal de la empresa."
+        },
+        "descProvincia" : {
+          "type" : "string",
+          "example" : "VALENCIA",
+          "description" : "Provincia de la dirección fiscal de la empresa."
+        },
+        "descPais" : {
+          "type" : "string",
+          "example" : "ESPAÑA",
+          "description" : "Pais de la dirección fiscal de la empresa."
+        }
+      },
+      "additionalProperties" : { }
+    },
+    "ProveedorType" : {
+      "type" : "object",
+      "properties" : {
+        "codigoPublico" : {
+          "type" : "string",
+          "description" : "Código del proveedor."
+        },
+        "nombre" : {
+          "type" : "string",
+          "description" : "Nombre del proveedor."
+        },
+        "codigo" : {
+          "type" : "string",
+          "description" : "Código legacy del proveedor."
+        }
+      }
+    },
+    "DeclaracionDeValorSumaryType" : {
+      "type" : "object",
+      "properties" : {
+        "esDeclaracionCorrecta" : {
+          "type" : "boolean",
+          "description" : "Indica el estado de la declaración de valor."
+        },
+        "anyo" : {
+          "type" : "integer",
+          "description" : "Anyo de la declaración de valor."
+        },
+        "numero" : {
+          "type" : "integer",
+          "description" : "Número de la declaración de valor."
+        },
+        "version" : {
+          "type" : "integer",
+          "description" : "Versión de la declaración de valor."
+        },
+        "esFactura" : {
+          "type" : "boolean",
+          "description" : "Indica si es factura o no la declaración de valor."
+        },
+        "importeTotal" : {
+          "type" : "number",
+          "example" : 3324.32,
+          "description" : "Importe total de la declaración de valor."
+        },
+        "fechaExpedicion" : {
+          "type" : "string",
+          "format" : "date",
+          "description" : "Fecha en la que se envió la expedición."
+        },
+        "proveedor" : {
+          "$ref" : "#/definitions/ProveedorType"
+        },
+        "numeroPedido" : {
+          "type" : "string",
+          "example" : "1984627.0",
+          "description" : "Número del pedido asociado a la declaración de valor."
+        },
+        "fechaGeneracion" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Fecha de la generación de la declaración de valor."
+        },
+        "estaDescargada" : {
+          "type" : "boolean",
+          "description" : "Indicador sobre si la declaración de valor ha sido descargada o no."
+        },
+        "fechaDescargaDocumento" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Fecha en la que fué descargada la declaración de valor."
+        }
+      }
+    },
+    "CabeceraDeclaracionDeValorType" : {
+      "type" : "object",
+      "properties" : {
+        "datosDeclaracion" : {
+          "$ref" : "#/definitions/CabeceraDeclaracionDeValorType_datosDeclaracion"
+        },
+        "datosPedido" : {
+          "$ref" : "#/definitions/CabeceraDeclaracionDeValorType_datosPedido"
+        },
+        "datosExportador" : {
+          "$ref" : "#/definitions/CabeceraDeclaracionDeValorType_datosExportador"
+        },
+        "datosDestinatario" : {
+          "$ref" : "#/definitions/CabeceraDeclaracionDeValorType_datosDestinatario"
+        }
+      }
+    },
+    "LineaDeclaracionDeValorType" : {
+      "type" : "object",
+      "properties" : {
+        "producto" : {
+          "$ref" : "#/definitions/LineaDeclaracionDeValorType_producto"
+        }
+      },
+      "description" : "Tipo de dato para representar una línea de la declaración de valor.\n",
+      "additionalProperties" : { }
+    },
+    "DatosComunesDeclaracionDeValorType" : {
+      "type" : "object",
+      "properties" : {
+        "esFactura" : {
+          "type" : "boolean",
+          "description" : "Indica si la declaración de valor es factura."
+        },
+        "esUltimaVigente" : {
+          "type" : "boolean",
+          "description" : "Indica si se trata de la última versión vigente de la declaración de valor."
+        },
+        "esCorrecta" : {
+          "type" : "boolean",
+          "description" : "Indica si se la declaración de valor es correcta o no en su generación. Se refiere a las validaciones funcionales de productos, precios, etc.\n"
+        },
+        "estaNotificada" : {
+          "type" : "boolean",
+          "description" : "Indica si se ha enviado la notificación de la generación correcta o no de la declaración de valor."
+        },
+        "estaDescargada" : {
+          "type" : "boolean",
+          "description" : "Indica si el Agente de Aduana se ha descargado la declaración de valor."
+        },
+        "fechaDescargaDeclaracionValor" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Fecha de cuando se descargó por primera vez la declaración de valor por el Agente de Aduanas."
+        },
+        "esCargaManual" : {
+          "type" : "boolean",
+          "description" : "Marca que indica si la declaración de valor se ha generado mediante carga manual, si no se asume que es automática."
+        }
+      },
+      "description" : "Indicadores generales de la declaración de valor."
+    },
+    "DeclaracionDeValorType" : {
+      "type" : "object",
+      "properties" : {
+        "datosComunes" : {
+          "$ref" : "#/definitions/DatosComunesDeclaracionDeValorType"
+        },
+        "cabecera" : {
+          "$ref" : "#/definitions/CabeceraDeclaracionDeValorType"
+        },
+        "lineas" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/LineaDeclaracionDeValorType"
+          }
+        }
+      },
+      "description" : "Tipo de dato para representar la declaración de valor. Esta contiene los datos comunes, la cabecera y las líneas.\n"
+    },
+    "ErrorType" : {
+      "type" : "object",
+      "required" : [ "codigo", "descripcion" ],
+      "properties" : {
+        "codigo" : {
+          "type" : "string",
+          "description" : "Código del error."
+        },
+        "descripcion" : {
+          "type" : "string",
+          "description" : "Descripción de error."
+        },
+        "detalles" : {
+          "type" : "array",
+          "description" : "Datos adicionales asociados al error.",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        }
+      }
+    },
+    "inline_response_200" : {
+      "type" : "object",
+      "required" : [ "datos" ],
+      "properties" : {
+        "metadatos" : {
+          "type" : "object",
+          "properties" : { }
+        },
+        "datos" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/DeclaracionDeValorSumaryType"
+          }
+        }
+      }
+    },
+    "inline_response_400" : {
+      "type" : "object",
+      "required" : [ "error" ],
+      "properties" : {
+        "metadatos" : {
+          "type" : "object",
+          "properties" : { }
+        },
+        "error" : {
+          "$ref" : "#/definitions/ErrorType"
+        }
+      }
+    },
+    "declaracionesvalor_metadatos" : {
+      "type" : "object",
+      "required" : [ "codigoUsuario" ],
+      "properties" : {
+        "codigoUsuario" : {
+          "type" : "string",
+          "example" : "sgarciae",
+          "description" : "Código del usuario logado en el portal que consume al aplicación. Usuario requerido por auditoria. Necesario saber quien crea el recurso.\n"
+        }
+      }
+    },
+    "declaracionesvalor_datos" : {
+      "type" : "object",
+      "properties" : {
+        "cabecera" : {
+          "$ref" : "#/definitions/CabeceraDeclaracionDeValorType"
+        },
+        "lineasDeclaracionDeValor" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/LineaDeclaracionDeValorType"
+          }
+        }
+      }
+    },
+    "datos" : {
+      "type" : "object",
+      "required" : [ "datos" ],
+      "properties" : {
+        "metadatos" : {
+          "$ref" : "#/definitions/declaracionesvalor_metadatos"
+        },
+        "datos" : {
+          "$ref" : "#/definitions/declaracionesvalor_datos"
+        }
+      }
+    },
+    "inline_response_201_datos" : {
+      "type" : "object",
+      "properties" : {
+        "codigoDeclaracion" : {
+          "type" : "number"
+        },
+        "anyo" : {
+          "type" : "number"
+        },
+        "version" : {
+          "type" : "integer"
+        }
+      }
+    },
+    "inline_response_201" : {
+      "type" : "object",
+      "properties" : {
+        "metadatos" : {
+          "type" : "object",
+          "properties" : { }
+        },
+        "datos" : {
+          "$ref" : "#/definitions/inline_response_201_datos"
+        }
+      }
+    },
+    "inline_response_200_1_datos" : {
+      "type" : "object",
+      "properties" : {
+        "declaracionDeValor" : {
+          "$ref" : "#/definitions/DeclaracionDeValorType"
+        }
+      }
+    },
+    "inline_response_200_1" : {
+      "type" : "object",
+      "properties" : {
+        "metadatos" : {
+          "type" : "object",
+          "properties" : { }
+        },
+        "datos" : {
+          "$ref" : "#/definitions/inline_response_200_1_datos"
+        }
+      }
+    },
+    "declaracionesvalorcodigoDeclaracionanyoversionconfirmardescarga_metadatos" : {
+      "type" : "object",
+      "required" : [ "codigoUsuario" ],
+      "properties" : {
+        "codigoUsuario" : {
+          "type" : "string",
+          "example" : "sgarciae",
+          "description" : "Código del usuario logado en el portal que consume la aplicación. Usuario requerido por auditoria. Necesario saber quien crea el recurso.\n"
+        }
+      }
+    },
+    "declaracionesvalorcodigoDeclaracionanyoversionconfirmardescarga_datos" : {
+      "type" : "object",
+      "properties" : {
+        "estaDescargada" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "datos_1" : {
+      "type" : "object",
+      "required" : [ "datos" ],
+      "properties" : {
+        "metadatos" : {
+          "$ref" : "#/definitions/declaracionesvalorcodigoDeclaracionanyoversionconfirmardescarga_metadatos"
+        },
+        "datos" : {
+          "$ref" : "#/definitions/declaracionesvalorcodigoDeclaracionanyoversionconfirmardescarga_datos"
+        }
+      }
+    },
+    "inline_response_200_2" : {
+      "type" : "object",
+      "required" : [ "datos" ],
+      "properties" : {
+        "metadatos" : {
+          "type" : "object",
+          "properties" : { }
+        },
+        "datos" : {
+          "$ref" : "#/definitions/DatosFiscalesType"
+        }
+      }
+    },
+    "inline_response_200_3" : {
+      "type" : "object",
+      "required" : [ "datos" ],
+      "properties" : {
+        "metadatos" : {
+          "type" : "object",
+          "properties" : { }
+        },
+        "datos" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/ProveedorType"
+          }
+        }
+      }
+    },
+    "CabeceraDeclaracionDeValorType_datosDeclaracion" : {
+      "type" : "object",
+      "properties" : {
+        "codigo" : {
+          "type" : "integer",
+          "description" : "Código de la declaración de Valor."
+        },
+        "anyo" : {
+          "type" : "integer",
+          "example" : 2017,
+          "description" : "Año en el que se ha generado la declaración de valor."
+        },
+        "version" : {
+          "type" : "integer",
+          "description" : "Código secuencial que identifica a una declaración de valor."
+        },
+        "fecha" : {
+          "type" : "string",
+          "format" : "date-time",
+          "example" : "2018-02-03T17:39:44.350Z",
+          "description" : "Fecha de creación de la declaración de valor."
+        },
+        "totalImporte" : {
+          "type" : "number",
+          "example" : "1234,24",
+          "description" : "Importe total de la declaración de valor."
+        }
+      },
+      "description" : "Datos generales de la declaración de valor."
+    },
+    "CabeceraDeclaracionDeValorType_datosPedido_provinciaDeCarga" : {
+      "type" : "object",
+      "properties" : {
+        "codigo" : {
+          "type" : "string",
+          "description" : "Código limite geográfico de la provincia de carga."
+        },
+        "nombre" : {
+          "type" : "string",
+          "description" : "Nombre provincia de carga."
+        }
+      }
+    },
+    "CabeceraDeclaracionDeValorType_datosPedido" : {
+      "type" : "object",
+      "properties" : {
+        "fecha" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Fecha del pedido de Mercadona"
+        },
+        "codigo" : {
+          "type" : "string",
+          "description" : "Código del pedido."
+        },
+        "proveedor" : {
+          "$ref" : "#/definitions/ProveedorType"
+        },
+        "provinciaDeCarga" : {
+          "$ref" : "#/definitions/CabeceraDeclaracionDeValorType_datosPedido_provinciaDeCarga"
+        },
+        "codigoExpedicion" : {
+          "type" : "string",
+          "description" : "Código del albarán generado en la expedición del proveedor."
+        },
+        "condicionesEntrega" : {
+          "type" : "string",
+          "example" : "FRX",
+          "description" : "Se refiere al modo del pago acordado con el proveedor.  Es un string de longitud 3 caracteres.\n"
+        },
+        "fechaAlbaran" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Fecha del albarán de la expedición."
+        },
+        "fechaEnvio" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Fecha de envío de la mercancía."
+        }
+      },
+      "description" : "Datos generales del pedido asociados a la declaración de valor"
+    },
+    "CabeceraDeclaracionDeValorType_datosExportador" : {
+      "type" : "object",
+      "properties" : {
+        "codigo" : {
+          "type" : "string",
+          "example" : "8.0",
+          "description" : "Código de la empresa exportadora de la mercancía."
+        }
+      },
+      "description" : "Datos del exportador de la mercancía."
+    },
+    "CabeceraDeclaracionDeValorType_datosDestinatario" : {
+      "type" : "object",
+      "properties" : {
+        "codigoAlmacen" : {
+          "type" : "string",
+          "description" : "Código del almacén destino de la mercancía."
+        },
+        "nombreAlmacen" : {
+          "type" : "string",
+          "description" : "Nombre del almacén destino."
+        }
+      },
+      "description" : "Datos del importador de la mercancía."
+    },
+    "LineaDeclaracionDeValorType_producto" : {
+      "type" : "object",
+      "properties" : {
+        "codigoPublico" : {
+          "type" : "integer",
+          "example" : 15070,
+          "description" : "Código Merca del producto"
+        },
+        "codigoTaric" : {
+          "type" : "string",
+          "example" : "2007993980",
+          "description" : "Código Taric del producto que se exporta. Es un código numérico que se asocia a cada mercancía en función de su naturaleza. Es necesario si se quiere exportar.\n"
+        },
+        "codigoRea" : {
+          "type" : "string",
+          "example" : "02013000T015",
+          "description" : "Código REA del producto. Está relacionado con un Merca que antes ha de tener Taric. Sin Taric no se puede tener código REA. Régimen especial de abastecimiento para Canarias.\n"
+        },
+        "nombreAlternativo" : {
+          "type" : "string",
+          "description" : "Nombre alternativo del producto."
+        },
+        "descFormatoVentaAlternativo" : {
+          "type" : "string",
+          "description" : "Descripción del formato de venta alternativa del producto."
+        },
+        "codigoTipoBulto" : {
+          "type" : "string",
+          "description" : "Código del tipo de empaquetado."
+        },
+        "numeroDeBultos" : {
+          "type" : "number",
+          "description" : "Número de bultos del producto."
+        },
+        "pesoNetoLinea" : {
+          "type" : "number",
+          "description" : "Peso neto total de la línea en kilogramos."
+        },
+        "pesoBrutoLinea" : {
+          "type" : "number",
+          "description" : "Peso bruto total de la línea en kilogramos."
+        },
+        "volumenUnidad" : {
+          "type" : "number",
+          "description" : "Capacidad de volumen neto de la unidad de venta en litros."
+        },
+        "cantidadFormato" : {
+          "type" : "number",
+          "description" : "Cantidad de producto por formato de venta en unidades."
+        },
+        "precioUnidad" : {
+          "type" : "number",
+          "description" : "Precio del producto por unidad del formato de venta."
+        },
+        "importeTotal" : {
+          "type" : "number",
+          "description" : "Importe neto total de la línea."
+        },
+        "gradoAlcohol" : {
+          "type" : "number",
+          "description" : "Graduación alcohólica de cualquier bebida alcohólica."
+        },
+        "gradoPlato" : {
+          "type" : "number",
+          "description" : "Si el producto alcohólico es cerveza, necesario indicar el grado plato como requisito para la aduana.\n"
+        },
+        "paisOrigen" : {
+          "type" : "string",
+          "description" : "Código ISO 3166-1 alfa-2 del país de origen. Necesario identificar el pais origen del producto.\n"
+        },
+        "esListoParaComer" : {
+          "type" : "boolean",
+          "description" : "Marca que indica si el producto está catalogado como Listo para Comer."
+        }
+      },
+      "description" : "Se normaliza el dato producto dentro de la línea, por si se incorpora más información en referencia a las líneas de las declaraciones de valor."
+    }
+  }
+}
