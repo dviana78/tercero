@@ -13,8 +13,8 @@
       "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "host" : "petstore.swagger.io",
-  "basePath" : "/v2",
+  "host" : "virtserver.swaggerhub.com",
+  "basePath" : "/Tercero/swagger-petstore/1.0.4",
   "tags" : [ {
     "name" : "pet",
     "description" : "Everything about your Pets",
